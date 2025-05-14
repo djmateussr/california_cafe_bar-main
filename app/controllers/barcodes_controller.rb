@@ -1,57 +1,77 @@
-# app/controllers/barcodes_controller.rb
 class BarcodesController < ApplicationController
 
-
-  #   When the user clics in the button 'leitor', in the home index, i want it to start selling.
-  # So, as the user adds products in the reader, it will appear below the reader.
-  # And the sale will be finished when the user clicks in the button 'finalizar venda'.
-  # Then, when the user finish the sale, the items below the reader will be saved in the database and vanish from the reader.
-  # This way, the user can start a new sale.
+  # Inicia o processo de venda, limpando a sessão de produtos
   def start_selling
     session[:stocks] = []
     redirect_to barcodes_scan_path
   end
 
+  # Busca o produto pelo código de barras e o adiciona ao carrinho de compras
   def search
     barcode = params[:barcode]
     stock = Stock.find_by(barcode: barcode)
-    
-    session[:stocks] ||= []
-  
-    session[:stocks] << stock if stock
-    
+
+    if stock
+      session[:stocks] ||= []
+      session[:stocks] << stock
+      flash[:notice] = "Produto adicionado ao carrinho!"
+    else
+      flash[:alert] = "Produto não encontrado!"
+    end
+
     redirect_to barcodes_scan_path
   end
-  
+
+  # Finaliza a venda, criando um registro de venda e atualizando o estoque
   def finish_sale
     payment_method = params[:payment_method]
 
-    session[:stocks].each_with_index do |stock_data, index|
-      stock_info = stock_data.is_a?(Array) ? stock_data.last : stock_data
-      stock = Stock.find(stock_info['id'])
+    # Verifica se o método de pagamento foi informado
+    unless payment_method.present?
+      flash[:alert] = "Método de pagamento não selecionado!"
+      return redirect_to barcodes_scan_path
+    end
 
-      if stock.barcode == '1111111111111' && params[:stocks] && params[:stocks][index.to_s]
-        salgado_type_id = params[:stocks][index.to_s][:salgado_type]
-        stock = Stock.find(salgado_type_id)
-      end
+    # Realiza a transação para garantir que todas as operações sejam atômicas
+    Sale.transaction do
+      session[:stocks].each_with_index do |stock_data, index|
+        stock_info = stock_data.is_a?(Array) ? stock_data.last : stock_data
+        stock = Stock.find(stock_info['id'])
 
-      puts "Current stock amount: #{stock.amount}, trying to create sale with quantity: 1"
+        # Atualiza o estoque de acordo com o item selecionado
+        if stock.barcode == '1111111111111' && params[:stocks] && params[:stocks][index.to_s]
+          salgado_type_id = params[:stocks][index.to_s][:salgado_type]
+          stock = Stock.find(salgado_type_id)
+        end
 
-      sale = Sale.new(stock: stock, quantity: 1, payment_method: payment_method)
+        if stock.amount > 0
+          sale = Sale.new(stock: stock, quantity: 1, payment_method: payment_method)
 
-      if sale.save
-        puts "Sale successfully created!"
-      else
-        puts "Sale failed to save: #{sale.errors.full_messages}"
+          if sale.save
+            # Reduz a quantidade do estoque após a venda
+            stock.update!(amount: stock.amount - 1)
+            puts "Venda criada com sucesso!"
+          else
+            flash[:alert] = "Falha ao criar a venda: #{sale.errors.full_messages.join(", ")}"
+            raise ActiveRecord::Rollback, "Venda não realizada"
+          end
+        else
+          flash[:alert] = "Estoque insuficiente para o produto #{stock.name}"
+          raise ActiveRecord::Rollback, "Estoque insuficiente"
+        end
       end
     end
 
     session[:stocks] = []
-    redirect_to barcodes_scan_path, notice: 'Sale was successfully created.'
+    redirect_to barcodes_scan_path, notice: 'Venda finalizada com sucesso!'
+  rescue ActiveRecord::Rollback => e
+    flash[:alert] = "Erro na transação: #{e.message}"
+    redirect_to barcodes_scan_path
   end
 
+  # Cancela a venda, limpando a sessão de produtos
   def cancel_sale
     session[:stocks] = []
-    redirect_to barcodes_scan_path, notice: 'Sale was successfully canceled.'
+    redirect_to barcodes_scan_path, notice: 'Venda cancelada com sucesso!'
   end
 end

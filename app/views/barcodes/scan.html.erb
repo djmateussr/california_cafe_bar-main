@@ -101,9 +101,44 @@
       <%= text_field_tag :barcode, nil, autofocus: true, placeholder: "Scan Barcode Here", oninput: "if(this.value.length === 13) this.form.submit();" %>
     <% end %>
 
+    <%= form_with url: finish_sale_barcodes_path, method: :post, id: 'sale_form' do %>
+      <% (session[:stocks] || []).each_with_index do |stock, index| %>
+  <div class="info">
+    <label>DETALHES DO PRODUTO:</label>
+    <p>SALGADO: <%= stock["name"] %></p>
+
+    <!-- Select para tipo de salgado -->
+    <label for="salgado_type_<%= index %>">Selecione o tipo de salgado</label>
+    <%= select_tag "stocks[#{index}][salgado_type]",
+          options_for_select(
+            (stock["types"] || [{ "name" => stock["name"], "id" => stock["name"] }])
+              .map { |type| [type["name"] || type.name, type["id"] || type.id] }
+          ),
+          prompt: "Escolha o tipo de salgado",
+          id: "salgado_type_#{index}" %>
+
+    <p>QUANTIDADE EM ESTOQUE: <%= stock["quantity"] %></p>
+    <p>PREÇO: R$<%= number_with_precision(stock["price"], precision: 2, separator: ",") %></p>
+  </div>
+<% end %>
+
+      <% if session[:stocks] && session[:stocks].any? %>
+        <p class="total-price">Preço total: $<span id="total_price"><%= session[:stocks].sum { |stock| stock["price"] } %></span></p>
+        
+        <div class="payment-method">
+
+        <%= select_tag :payment_method, options_for_select([['Pix', 'pix'], ['Dinheiro', 'dinheiro'], ['Débito', 'debito'], ['Crédito', 'credito']]), prompt: 'Selecione um método de pagamento' %>
+        </div>
+
+        <%= submit_tag 'Finish', id: 'finish_sale_button' %>
+      <% end %>
+    <% end %>
+
+
+
     <div class="actions">
       <%= button_to 'Cancelar', cancel_sale_barcodes_path, method: :post %>
-      <%= link_to 'Home', root_path, class: 'home-button' %>
+      <%= link_to 'Voltar', root_path, class: 'home-button' %>
     </div>
   </div>
 

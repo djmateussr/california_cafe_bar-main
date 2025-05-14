@@ -30,7 +30,7 @@
 
     <div class="form-group">
       <%= f.label :barcode, "Código de barras", class: "form-label" %>
-      <%= f.text_field :barcode, class: 'form-control', placeholder: "Gerado automaticamente se vazio" %>
+      <%= f.text_field :barcode, class: 'form-control', placeholder: "Seu codigo de barras tem que ter exatos 13 digitos" %>
     </div>
 
     <div class="form-group checkbox-group">
@@ -39,7 +39,8 @@
     </div>
 
     <div class="form-group">
-      <%= f.submit "Criar Estoque", class: 'btn btn-primary' %>
+      <%= f.submit "Criar Estoque", class: 'btn btn-primary', disabled: false %>
+
     </div>
   <% end %>
 </div>

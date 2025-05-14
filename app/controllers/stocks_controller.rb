@@ -3,18 +3,18 @@ class StocksController < AuthenticatedController
     @stock = Stock.new
   end
 
-  def create
-    # Assign default barcode if the field is left blank
-    default_barcode = "DEFAULT_BARCODE_#{SecureRandom.hex(3)}"
-    @stock = Stock.new(stock_params.merge(user: current_user, barcode: stock_params[:barcode].presence || default_barcode))
-  
-    if @stock.save
-      redirect_to new_stock_path, notice: 'Stock created successfully.'
-    else
-      logger.debug "Stock creation failed: #{@stock.errors.full_messages}"
-      render :new
-    end
+def create
+  default_barcode = "DEFAULT_BARCODE_#{SecureRandom.hex(3)}"
+  @stock = Stock.new(stock_params.merge(user: current_user, barcode: stock_params[:barcode].presence || default_barcode))
+
+  if @stock.save
+    redirect_to new_stock_path, notice: 'Stock created successfully.'  # REDIRECIONA para evitar o erro Turbo
+  else
+    render :new, status: :unprocessable_entity  # Renderiza o formulário com erros
   end
+end
+
+  
 
   def amount
     stock = Stock.find(params[:id])
@@ -55,7 +55,18 @@ class StocksController < AuthenticatedController
     params.require(:stock).permit(:name, :amount, :price, :barcode, :is_salgado)
   end
 end
+  def search
+    barcode = params[:barcode]
+    @stock = Stock.find_by(barcode: barcode)
 
+    respond_to do |format|
+      if @stock
+        format.html { redirect_to @stock, notice: "Produto encontrado: #{@stock.name}" }
+      else
+        format.html { redirect_to root_path, alert: "Produto não encontrado para o código #{barcode}" }
+      end
+    end
+  end
   def scan
     barcode = params[:barcode]
 
@@ -68,3 +79,4 @@ end
       render json: { status: 'error', message: 'Produto não encontrado' }, status: 404
     end
   end
+  

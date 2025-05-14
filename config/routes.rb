@@ -52,6 +52,7 @@ Rails.application.routes.draw do
 
   # Route for the scan page (input field to scan barcode)
   get 'barcodes/scan', to: 'barcodes#scan'
+  
 
   resources :barcodes do
     post 'finish_sale', on: :collection
