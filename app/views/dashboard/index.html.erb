@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #8e2de2, #4a00e0, #00c6ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .dashboard-container {
+      background-color: #000;
+      padding: 40px;
+      border-radius: 30px;
+      text-align: center;
+      color: white;
+      width: 350px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .dashboard-container img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-container h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-button {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      margin: 10px 0;
+      background-color: #800040;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .dashboard-button:hover {
+      background-color: #a00060;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <%= image_tag 'logo.jpeg', alt: 'Logo do California Café Bar' %>
+    <h1>DASHBOARD</h1>
+    <%= link_to 'VENDAS', dashboard_sales_path, class: 'dashboard-button' %>
+    <%= link_to 'ESTOQUE DIÁRIO', dashboard_stock_path, class: 'dashboard-button' %>
+    <%= link_to 'INICIO', root_path, class: 'dashboard-button' %>
+  </div>
+</body>
+</html>

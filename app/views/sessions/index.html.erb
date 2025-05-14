@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #780c84, #00b0c7);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .login-container {
+      background-color: #000;
+      padding: 40px 30px;
+      border-radius: 30px;
+      text-align: center;
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .login-container img {
+      width: 180px;
+      margin-bottom: 30px;
+    }
+
+    .form-control {
+      width: 80%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: #770043;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .form-control:focus { 
+      outline: none;
+      box-shadow: 0 0 0 2px #fff;
+    }
+
+    .btn {
+      display: inline-block;
+      width: 80%;
+      padding: 12px;
+      background-color: #770043;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-size: 16px;
+    }
+
+    .btn:hover {
+      background-color: #5a0032;
+    }
+
+    .links {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .links a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 6px 0;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <%= image_tag 'logo.jpeg', alt: 'Logo do California Café Bar' %>
+
+    <%= form_with(url: login_path, local: true, class: 'login-form') do |form| %>
+      <%= form.text_field :username, name: 'session[username]', placeholder: 'EMAIL', class: 'form-control' %>
+      <%= form.password_field :password, name: 'session[password]', placeholder: 'SENHA', class: 'form-control' %>
+      <%= form.submit 'ENTRAR', class: 'btn' %>
+    <% end %>
+
+    <div class="links">
+      <%#= link_to 'ESQUECEU A SENHA?', forgot_password_path %>
+      <%= link_to 'CADASTRAR-SE', new_user_path %>
+    </div>
+  </div>
+</body>
+</html>

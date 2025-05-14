@@ -1,0 +1,145 @@
+<h1>Estoque Califórnia</h1>
+
+<p style="text-align: center; font-size: 18px;">Total de produtos: <%= @stocks.count %></p>
+
+<div class="actions">
+  <%= link_to 'Adicionar produto', new_stock_path, class: 'btn' %>
+  <%= link_to 'Voltar para o início', root_path, class: 'btn' %>
+</div>
+
+<div class="stock-list">
+  <% if @stocks.any? %>
+    <% @stocks.each do |stock| %>
+      <div class="stock-item">
+        <h2><%= stock.name %></h2>
+        <p>Quantidade: <%= stock.amount %></p>
+        <p>Preço: R$ <%= number_to_currency(stock.price, unit: "") %></p>
+        <p>Código de barras: <%= stock.barcode %></p>
+        <p>Criado em: <%= stock.created_at.in_time_zone('Brasilia').strftime('%d/%m/%Y - %H:%M:%S') %></p>
+        <div class="stock-actions">
+          <%= form_with url: stock_path(stock), method: :post, class: 'delete-form' do %>
+            <%= hidden_field_tag :_method, :delete %>
+            <%= submit_tag 'Apagar', class: 'btn' %>
+          <% end %>
+          <%= link_to 'Editar', edit_stock_path(stock), class: 'btn' %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <!-- Produto de exemplo (teste visual) -->
+    <div class="stock-item">
+      <h2>Produto Teste</h2>
+      <p>Quantidade: 10</p>
+      <p>Preço: R$ 9,99</p>
+      <p>Código de barras: 1234567890</p>
+      <p>Criado em: 01/01/2025 - 12:00:00</p>
+      <div class="stock-actions">
+        <button class="btn">Apagar</button>
+        <button class="btn">Editar</button>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: linear-gradient(to bottom, #380447, #000000);
+    margin: 0;
+    padding: 20px;
+    color: #ffffff;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .actions {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 30px;
+    margin: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    text-decoration: none;
+    cursor: pointer;
+    background: #01858f;
+    color: #ffffff;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+  }
+
+  .btn:hover {
+    background: #222222;
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .stock-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stock-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stock-item h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 15px;
+    text-transform: capitalize;
+    font-weight: 700;
+  }
+
+  .stock-item p {
+    margin: 10px 0;
+    color: #dddddd;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .stock-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .delete-form {
+    display: inline-block;
+  }
+
+  @media (max-width: 768px) {
+    .stock-list {
+      grid-template-columns: 1fr;
+    }
+
+    .btn {
+      font-size: 0.9rem;
+      padding: 10px 20px;
+    }
+  }
+</style>

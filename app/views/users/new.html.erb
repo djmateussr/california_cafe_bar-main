@@ -1,0 +1,121 @@
+<h1>Criar conta</h1>
+
+<%= form_with(model: @user, local: true) do |form| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :username %>
+    <%= form.text_field :username, class: 'input-field' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :password %>
+    <%= form.password_field :password, class: 'input-field' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :password_confirmation, "Confirmar senha" %>
+    <%= form.password_field :password_confirmation, class: 'input-field' %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Criar novo usuário", class: 'btn-submit' %>
+  </div>
+<% end %>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to bottom, #380447, #000000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #ffffff;
+  }
+
+  form {
+    background-color: #ffffff10;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    backdrop-filter: blur(6px);
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: 500;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 1rem;
+  }
+
+  .input-field:focus {
+    outline: 2px solid #ffffff;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #000000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .btn-submit:hover {
+    background-color: #222222;
+    transform: translateY(-2px);
+  }
+
+  .btn-submit:active {
+    transform: translateY(1px);
+    background-color: #000000;
+  }
+
+  #error_explanation {
+    background: #ff4c4c20;
+    border: 1px solid #ff4c4c;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    color: #ffcccc;
+  }
+</style>

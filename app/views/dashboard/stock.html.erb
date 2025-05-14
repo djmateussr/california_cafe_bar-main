@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Itens Vendidos Hoje</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #9400d3, #00bfff);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stock-container {
+      background-color: #000;
+      padding: 40px 30px;
+      border-radius: 30px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    .stock-container img {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
+    .stock-container h1 {
+      font-size: 22px;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+
+    .item-box {
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      border: 1px solid #444;
+    }
+
+    .item-name {
+      background-color: #00bfa5;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .item-info {
+      text-align: right;
+      font-size: 14px;
+    }
+
+    .item-info p {
+      margin: 2px 0;
+    }
+
+    .total-box {
+      border-top: 1px solid white;
+      padding-top: 15px;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .btn-home {
+      margin-top: 25px;
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: #800040;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-home:hover {
+      background-color: #a00060;
+    }
+  </style>
+</head>
+<body>
+  <div class="stock-container">
+    <%= image_tag 'logo.jpeg', alt: 'Logo do California Café Bar' %>
+    <h1>ITENS VENDIDOS HOJE</h1>
+
+    <% total = 0 %>
+    <% @stock_items_sold.group_by(&:first).each do |stock_id, items| %>
+      <% stock = Stock.find_by_id(stock_id) %>
+      <% quantity = items.sum(&:last) %>
+      <% value = stock&.price.to_f * quantity %>
+      <% total += value %>
+      <div class="item-box">
+        <% if stock %>
+          <div class="item-name"><%= stock.name.upcase %></div>
+          <div class="item-info">
+            <p>QUANTIDADE: <%= quantity %></p>
+            <p>VALOR TOTAL: R$<%= number_with_precision(value, precision: 2, separator: ',') %></p>
+          </div>
+        <% else %>
+          <p style="color: red;">Produto não encontrado</p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="total-box">
+      TOTAL VENDIDOS: R$<%= number_with_precision(total, precision: 2, separator: ',') %>
+    </div>
+
+    <%= link_to 'HOME', root_path, class: 'btn-home' %>
+  </div>
+</body>
+</html>
