@@ -16,6 +16,7 @@ belongs_to :stock
     @sales = Sale.includes(:stock)
   end
 
+  
   def new
     @sale = Sale.new
     @stock = Stock.where(user_id: session[:user_id]) 
