@@ -73,5 +73,6 @@ class BarcodesController < ApplicationController
   def cancel_sale
     session[:stocks] = []
     redirect_to barcodes_scan_path, notice: 'Venda cancelada com sucesso!'
+    puts "sexo"
   end
 end
